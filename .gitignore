@@ -1,0 +1,21 @@
+# Dépendances
+node_modules/
+dist/
+coverage/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Environnement / secrets — JAMAIS versionné
+.env
+.env.*.local
+
+# Éditeurs / OS
+.vscode/
+.idea/
+.DS_Store
+*.swp
+
+# Divers
+*.tsbuildinfo

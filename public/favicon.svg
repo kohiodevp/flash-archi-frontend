@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <!-- Favicon Flash-Archi : plan stylisé (bleu profond + orange) -->
+  <rect width="32" height="32" rx="6" fill="#2750a4"/>
+  <path d="M7 23V14l6-5 5 4 7-7v14H7z" fill="#ffffff" opacity="0.92"/>
+  <path d="M7 23h18v4H7z" fill="#f57200"/>
+</svg>

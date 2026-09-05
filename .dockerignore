@@ -1,0 +1,11 @@
+# Ne pas copier dans le contexte Docker build
+node_modules
+dist
+.git
+*.log
+.env
+.env.*.local
+data
+README.md
+.dockerignore
+.gitignore

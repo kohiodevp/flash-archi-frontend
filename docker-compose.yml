@@ -1,0 +1,37 @@
+# =============================================================
+# Flash-Archi Frontend — docker-compose
+#
+#  DÉPLOIEMENT (contexte VPS) :
+#  1. Le conteneur est rattaché au réseau `npm-net` (Nginx Proxy
+#     Manager). Externe — déjà créé sur l'hôte.
+#  2. NPM reverse-proxy :
+#        https://app.flash-archi.com → http://flash-archi-frontend:80
+#        /api/**                      → http://flash-archi-api:8080/api/**
+#  3. Aucun port hôte exposé pour le frontend.
+#  4. Build en production : `docker compose build --no-cache`.
+#
+#  VARIABLES BYPASS (optionnelles) si on VEUT exposer un port en dev :
+#    - FRONTEND_HOST_PORT
+# =============================================================
+
+services:
+  flash-archi-frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: flash-archi-frontend
+    restart: unless-stopped
+    networks:
+      - npm-net
+    # Aucun ports: → pas d'exposition hôte. NPM route via le réseau.
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+networks:
+  npm-net:
+    external: true
+    name: npm-net

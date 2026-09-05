@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Règles globales de marque */
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-slate-50 text-slate-800 antialiased;
+}
+
+/* Focus visible accessible (WCAG AA) */
+:focus-visible {
+  @apply outline-2 outline-offset-2 outline-brand-500;
+}

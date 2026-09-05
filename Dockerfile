@@ -14,11 +14,14 @@
 FROM node:20-alpine AS build
 WORKDIR /app
 
-ENV NODE_ENV=production
+# IMPORTANT : ne PAS poser NODE_ENV=production ici, sinon npm omet
+# les devDependencies (vue-tsc, vite) et le build échoue (127).
+# Le build définit lui-même son environnement de prod.
 
-# D'abord les dépendances (cache Docker efficace)
+# D'abord les dépendances (cache Docker efficace) — npm ci reproduit
+# exactement le package-lock.json (devDependencies comprises).
 COPY package.json package-lock.json* ./
-RUN npm install
+RUN npm ci
 
 # Ensuite les sources
 COPY index.html vite.config.ts tsconfig.json tailwind.config.js postcss.config.js ./

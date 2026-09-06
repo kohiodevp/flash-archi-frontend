@@ -26,6 +26,14 @@
           Se connecter
         </router-link>
       </div>
+      <div class="mt-10 flex flex-wrap justify-center gap-4">
+        <router-link
+          to="/pricing"
+          class="rounded-lg border border-white/20 px-5 py-2.5 font-semibold text-brand-100 transition hover:bg-white/10"
+        >
+          Voir les tarifs
+        </router-link>
+      </div>
     </div>
   </section>
 </template>

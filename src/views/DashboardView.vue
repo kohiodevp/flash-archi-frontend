@@ -35,6 +35,28 @@ async function load() {
 }
 
 onMounted(load)
+
+// ---- Quota du mois (mocké V1) ------------------------------------
+// Structure prête pour l'API V2 : remplacer ces constantes par un état
+// fourni par /api/flash-archi/quota (plan + used + limit).
+type QuotaPlan = 'free' | 'pro'
+const PLAN = ref<QuotaPlan>('free') // ← durée locale mockée (démo : 'free')
+const QUOTA_LIMITS: Record<QuotaPlan, number> = { free: 3, pro: 50 }
+const quotaLimit = computed(() => QUOTA_LIMITS[PLAN.value] ?? 3)
+// Exemple démo : free→2/3 ; passer PLAN à 'pro'→12/50 (illustre le code couleur).
+const quotaUsed = computed(() => (PLAN.value === 'pro' ? 12 : 2))
+const quotaPct = computed(() => Math.min(100, Math.round((quotaUsed.value / quotaLimit.value) * 100)))
+const quotaBar = computed(() =>
+  quotaPct.value > 90 ? 'bg-red-500' : quotaPct.value >= 70 ? 'bg-amber-500' : 'bg-emerald-500'
+)
+const quotaBadge = computed(() =>
+  quotaPct.value > 90
+    ? { label: 'Quasi épuisé', class: 'bg-red-100 text-red-700' }
+    : quotaPct.value >= 70
+      ? { label: 'Quota élevé', class: 'bg-amber-100 text-amber-700' }
+      : { label: 'Disponible', class: 'bg-emerald-100 text-emerald-700' }
+)
+const quotaText = computed(() => `${quotaUsed.value}/${quotaLimit.value} générations utilisées ce mois-ci`)
 </script>
 
 <template>
@@ -63,6 +85,35 @@ onMounted(load)
       </AppCard>
       <AppCard title="Échecs">
         <p class="font-display text-3xl font-bold text-red-600">{{ failedJobs }}</p>
+      </AppCard>
+    </div>
+
+    <!-- Quota du mois (mocké V1 — prêt pour l'API V2) -->
+    <div class="mt-8 grid gap-5 sm:grid-cols-2">
+      <AppCard title="Quota du mois">
+        <div class="flex items-baseline justify-between">
+          <p class="font-display text-2xl font-bold text-brand-900">
+            {{ quotaUsed }}<span class="text-base font-semibold text-slate-400">/{{ quotaLimit }}</span>
+          </p>
+          <span
+            class="rounded-full px-2.5 py-1 text-xs font-semibold"
+            :class="quotaBadge.class"
+          >{{ quotaBadge.label }}</span>
+        </div>
+        <div class="mt-3 h-2.5 w-full overflow-hidden rounded-full bg-slate-200" role="progressbar" :aria-valuenow="quotaPct" aria-valuemin="0" aria-valuemax="100">
+          <div class="h-full rounded-full transition-all" :class="quotaBar" :style="{ width: quotaPct + '%' }" />
+        </div>
+        <p class="mt-2 text-xs text-slate-500">
+          {{ quotaText }} — réinitialisation au 1er du mois. (Compteur local ; le quota sera servi par l'API en V2.)
+        </p>
+      </AppCard>
+      <AppCard title="Nouveau job">
+        <p class="text-sm text-slate-500">
+          Lancez une génération architecturale et recevez plan, façades et métriques BIM.
+        </p>
+        <template #footer>
+          <AppButton variant="primary" @click="router.push('/jobs/new')">＋ Générer un plan</AppButton>
+        </template>
       </AppCard>
     </div>
 
@@ -104,12 +155,6 @@ onMounted(load)
     <div class="mt-8">
       <h2 class="mb-3 font-display text-base font-semibold text-slate-400">À venir (V2)</h2>
       <div class="grid gap-5 sm:grid-cols-2">
-        <AppCard title="Quota restant" muted>
-          <p class="text-sm text-slate-500">
-            Le suivi du quota (jobs/mois, plan free/pro) requiert une API backend multi-tenant (V2).
-          </p>
-          <template #footer><AppBadge status="pending" label="API V2 requise" /></template>
-        </AppCard>
         <AppCard title="Profil utilisateur" muted>
           <p class="text-sm text-slate-500">
             Le profil multi-utilisateur requiert la voie API publique multi-tenant (Postgres/RLS, V2).

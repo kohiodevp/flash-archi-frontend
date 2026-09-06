@@ -13,6 +13,7 @@ const auth = useAuthStore()
       </router-link>
 
       <nav aria-label="Navigation principale" class="flex items-center gap-4 text-sm font-medium text-slate-600">
+        <router-link to="/pricing" class="transition hover:text-brand-600">Tarifs</router-link>
         <template v-if="auth.isAuthenticated">
           <router-link to="/dashboard" class="transition hover:text-brand-600">Tableau de bord</router-link>
           <router-link to="/jobs" class="transition hover:text-brand-600">Historique</router-link>

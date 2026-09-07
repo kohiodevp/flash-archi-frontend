@@ -67,3 +67,41 @@ export interface SseEvent {
   result?: JobResult
   error?: string
 }
+
+// ---- Paiement Orange Money (P3-03) ----
+export type PaymentStatus = 'pending' | 'accepted' | 'refused' | 'cancelled' | 'failed'
+
+export interface PaymentRecord {
+  id: number
+  order_id: string
+  user_id: string
+  amount: number
+  currency: string
+  plan: string
+  status: PaymentStatus
+  payment_method: string
+  phone?: string
+  email?: string
+  created_at: string
+  updated_at: string
+}
+
+export interface CreatePaymentResult {
+  paymentUrl: string
+  orderId: string
+}
+
+export interface QuotaInfo {
+  plan: 'free' | 'pro' | 'enterprise'
+  quotaTotal: number
+  quotaRemaining: number
+  quotaResetAt: string | null
+  subscriptionStatus: string
+  lastPaymentId: number | null
+}
+
+export interface AccountInfo {
+  user: { id: string }
+  quota: QuotaInfo
+  payments: PaymentRecord[]
+}

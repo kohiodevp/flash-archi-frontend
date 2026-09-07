@@ -8,6 +8,9 @@ import NewJobView from '@/views/NewJobView.vue'
 import JobDetailView from '@/views/JobDetailView.vue'
 import PricingView from '@/views/PricingView.vue'
 import CheckoutView from '@/views/CheckoutView.vue'
+import CheckoutSuccessView from '@/views/CheckoutSuccessView.vue'
+import CheckoutCancelView from '@/views/CheckoutCancelView.vue'
+import AccountView from '@/views/AccountView.vue'
 
 // =============================================================
 // Routeur SPA Flash-Archi (Phase 2)
@@ -23,7 +26,10 @@ const router = createRouter({
     { path: '/', name: 'home', component: HomeView },
     { path: '/login', name: 'login', component: LoginView },
     { path: '/pricing', name: 'pricing', component: PricingView },
-    { path: '/checkout', name: 'checkout', component: CheckoutView },
+    { path: '/checkout', name: 'checkout', component: CheckoutView, meta: { requiresAuth: true } },
+    { path: '/checkout/success', name: 'checkout-success', component: CheckoutSuccessView },
+    { path: '/checkout/cancel', name: 'checkout-cancel', component: CheckoutCancelView },
+    { path: '/account', name: 'account', component: AccountView, meta: { requiresAuth: true } },
     { path: '/dashboard', name: 'dashboard', component: DashboardView, meta: { requiresAuth: true } },
     { path: '/jobs', name: 'jobs', component: JobsView, meta: { requiresAuth: true } },
     { path: '/jobs/new', name: 'new-job', component: NewJobView, meta: { requiresAuth: true } },

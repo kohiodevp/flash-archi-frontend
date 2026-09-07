@@ -15,7 +15,7 @@ type Plan = {
 const plans: Plan[] = [
   {
     name: 'Gratuit',
-    price: '0€',
+    price: '0XOF',
     period: '/mois',
     tagline: 'Pour découvrir Flash-Archi et valider votre idée.',
     features: [
@@ -30,7 +30,7 @@ const plans: Plan[] = [
   },
   {
     name: 'Pro',
-    price: '29€',
+    price: '17,400 XOF',
     period: '/mois',
     tagline: "L'outil complet pour les architectes indépendants.",
     featured: true,
@@ -40,8 +40,9 @@ const plans: Plan[] = [
       { text: 'Export IFC', included: true },
       { text: 'Historique illimité', included: true },
       { text: 'Support email', included: true },
+      { text: "Paiement via Orange Money (BF)", included: true },
     ],
-    cta: { label: 'Passer en Pro', to: '/checkout' },
+    cta: { label: "S'abonner avec Orange Money", to: '/checkout?plan=pro' },
   },
   {
     name: 'Enterprise',

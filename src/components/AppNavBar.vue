@@ -18,6 +18,7 @@ const auth = useAuthStore()
           <router-link to="/dashboard" class="transition hover:text-brand-600">Tableau de bord</router-link>
           <router-link to="/jobs" class="transition hover:text-brand-600">Historique</router-link>
           <router-link to="/jobs/new" class="transition hover:text-brand-600">Nouveau job</router-link>
+          <router-link to="/account" class="transition hover:text-brand-600">Mon compte</router-link>
           <button
             type="button"
             @click="auth.logout; $router.push('/login')"

@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { useAuthStore } from '@/stores/auth'
-import type { Job, JobSummary, SseEvent } from './types'
+import type { Job, JobSummary, SseEvent, CreatePaymentResult, AccountInfo } from './types'
 
 // =============================================================
 // Client API — Flash-Archi SaaS
@@ -50,6 +50,47 @@ export const jobsApi = {
   async get(id: string): Promise<Job> {
     const { data } = await http.get(`/flash-archi/jobs/${encodeURIComponent(id)}`)
     return data
+  },
+}
+
+// ---- Paiement Orange Money (P3-03) ----
+export const paymentApi = {
+  /**
+   * Crée un paiement Orange Money et renvoie l'URL de redirection.
+   * @param input Métadonnées du paiement (amount, plan, phone, email).
+   * @returns { paymentUrl, orderId }
+   */
+  async create(input: {
+    amount: number
+    description?: string
+    userId: string
+    plan: string
+    phone: string
+    email: string
+  }): Promise<CreatePaymentResult> {
+    const { data } = await http.post('/payment/create', input)
+    return data
+  },
+  /** Interroge le statut d'un paiement (polling page success). */
+  async status(orderId: string): Promise<{ status: string; amount: number; plan: string }> {
+    const { data } = await http.get(`/payment/status/${encodeURIComponent(orderId)}`)
+    return data
+  },
+  /** Infos abonnement + quota + historique du compte. */
+  async account(userId: string): Promise<AccountInfo> {
+    const { data } = await http.get(`/payment/account/${encodeURIComponent(userId)}`)
+    return data
+  },
+  /** Alias lecteur : cartographie des statuts → libellés français. */
+  staticLabel(status: string): string {
+    const map: Record<string, string> = {
+      pending: 'En attente',
+      accepted: 'Accepté',
+      refused: 'Refusé',
+      cancelled: 'Annulé',
+      failed: 'Échec',
+    }
+    return map[status] ?? status
   },
 }
 

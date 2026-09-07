@@ -82,7 +82,7 @@ async function handlePayWithOrangeMoney() {
     return
   }
   const emailTrim = email.value.trim()
-  if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(emailTrim)) {
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailTrim)) {
     error.value = 'Veuillez saisir une adresse email valide.'
     return
   }

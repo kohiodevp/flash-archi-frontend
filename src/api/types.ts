@@ -66,6 +66,11 @@ export interface SseEvent {
   status?: JobStatus
   result?: JobResult
   error?: string
+  // Phase 3B : progression (événement type 'progress').
+  stage?: string
+  percent?: number
+  position?: number
+  queued?: boolean
 }
 
 // ---- Paiement Orange Money (P3-03) ----

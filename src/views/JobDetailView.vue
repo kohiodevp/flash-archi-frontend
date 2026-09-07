@@ -40,7 +40,16 @@ const facadeNames: { key: 'north' | 'south' | 'east' | 'west'; label: string }[]
   { key: 'east', label: 'Est' },
   { key: 'west', label: 'Ouest' },
 ]
-const facadeDataUri = (b64?: string) => (b64 && b64.length > 0 ? `data:image/png;base64,${b64}` : '')
+const facadeDataUri = (b64?: string) => {
+  if (!b64 || b64.length === 0) return ''
+  // Le backend peut renvoyer un data URI complet OU un base64 brut.
+  return b64.startsWith('data:image') ? b64 : `data:image/png;base64,${b64}`
+}
+
+// --- Progression (événements SSE type 'progress') ---
+const progressPct = ref(0)
+const progressStage = ref('En attente…')
+const progressVisible = computed(() => status.value === 'pending' || status.value === 'processing')
 
 // --- Métriques BIM (traduction clé → libellé) ---
 const metricLabels: Record<string, string> = {
@@ -90,12 +99,20 @@ function dlIfc() {
 // --- SSR/SSE ---
 let unsub: (() => void) | null = null
 
-function applyEvent(ev: { status?: JobStatus; result?: unknown; error?: string }) {
+function applyEvent(ev: { type?: string; status?: JobStatus; result?: unknown; error?: string; stage?: string; percent?: number }) {
+  // Événement de progression SSE (Phase 3B).
+  if (ev.type === 'progress' && typeof ev.percent === 'number') {
+    progressPct.value = Math.max(0, Math.min(100, Math.round(ev.percent)))
+    if (ev.stage) progressStage.value = ev.stage
+  }
   if (ev.status) status.value = ev.status
+  if (ev.stage) progressStage.value = ev.stage
   if (ev.error) error.value = ev.error
   if (ev.result && typeof ev.result === 'object') {
     job.value = { ...(job.value ?? { id: jobId, status: status.value, createdAt: 0, updatedAt: 0 }), result: ev.result as Job['result'] }
+    progressPct.value = 100
   }
+  if (ev.status === 'completed') progressPct.value = 100
 }
 
 async function load() {
@@ -154,6 +171,17 @@ onBeforeUnmount(() => {
       <div class="flex gap-2">
         <AppButton variant="primary" @click="router.push('/jobs/new')">＋ Nouveau job</AppButton>
         <AppButton variant="secondary" @click="router.push('/dashboard')">← Tableau de bord</AppButton>
+      </div>
+    </div>
+
+    <!-- Barre de progression (Phase 3B) — visible pendant pending/processing -->
+    <div v-if="progressVisible" class="mt-6 rounded-lg border border-brand-200 bg-white px-5 py-4 shadow-sm">
+      <div class="flex items-center justify-between text-sm">
+        <span class="font-medium text-brand-800">{{ progressStage }}</span>
+        <span class="font-mono text-xs text-slate-500">{{ progressPct }}%</span>
+      </div>
+      <div class="mt-2 h-2.5 w-full overflow-hidden rounded-full bg-slate-200">
+        <div class="h-full rounded-full bg-brand-600 transition-all duration-300" :style="{ width: progressPct + '%' }" />
       </div>
     </div>
 
